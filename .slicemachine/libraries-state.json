@@ -1,0 +1,70 @@
+{
+  "slices": {
+    "components": {
+      "content_post": {
+        "library": "slices",
+        "id": "content_post",
+        "name": "ContentPost",
+        "description": "ContentPost",
+        "model": {
+          "id": "content_post",
+          "type": "SharedSlice",
+          "name": "ContentPost",
+          "description": "ContentPost",
+          "variations": [
+            {
+              "id": "default",
+              "name": "Default",
+              "docURL": "...",
+              "version": "sktwi1xtmkfgx8626",
+              "description": "ContentPost",
+              "primary": {
+                "heading": {
+                  "type": "Text",
+                  "config": {
+                    "label": "Heading",
+                    "placeholder": ""
+                  }
+                },
+                "body": {
+                  "type": "StructuredText",
+                  "config": {
+                    "label": "Body",
+                    "placeholder": "",
+                    "allowTargetBlank": true,
+                    "multi": "paragraph,em,hyperlink,image,embed,list-item,o-list-item,rtl,strong"
+                  }
+                }
+              },
+              "items": {},
+              "imageUrl": "https://images.prismic.io/slice-machine/621a5ec4-0387-4bc5-9860-2dd46cbc07cd_default_ss.png?auto=compress,format"
+            }
+          ]
+        },
+        "mocks": {
+          "default": {
+            "variation": "default",
+            "name": "Default",
+            "slice_type": "content_post",
+            "items": [],
+            "primary": {
+              "heading": "incentivize web-enabled infomediaries",
+              "body": [
+                {
+                  "type": "paragraph",
+                  "text": "Consectetur ullamco incididunt dolore cillum sint ullamco ad. Est labore proident nostrud ullamco consectetur commodo tempor duis veniam ex ad id ex.",
+                  "spans": []
+                }
+              ]
+            }
+          }
+        },
+        "meta": {
+          "fileName": "index",
+          "extension": "js"
+        },
+        "screenshotPaths": {}
+      }
+    }
+  }
+}
