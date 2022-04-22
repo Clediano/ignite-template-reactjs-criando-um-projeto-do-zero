@@ -1,16 +1,18 @@
+/* eslint-disable react/button-has-type */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 import { GetStaticProps } from 'next';
 import * as prismicH from '@prismicio/helpers';
 import { FiCalendar, FiUser } from 'react-icons/fi';
 import { format } from 'date-fns';
 import ptBR from 'date-fns/locale/pt-BR';
+import Head from 'next/head';
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
 import Header from '../components/Header';
 import { getPrismicClient } from '../services/prismic';
 import commonStyles from '../styles/common.module.scss';
 import styles from './home.module.scss';
 import Post from './post/[slug]';
-import Head from 'next/head';
-import Link from 'next/link';
-import { useEffect, useState } from 'react';
 
 interface Post {
   uid?: string;
@@ -38,35 +40,47 @@ export default function Home({ postsPagination }: HomeProps): JSX.Element {
   useEffect(() => {
     setPosts(postsPagination.results);
     setNextPage(postsPagination.next_page);
-  }, [postsPagination])
+  }, [postsPagination]);
 
-  function handleLoadMorePosts() {
-    fetch(postsPagination.next_page)
-    .then(response => response.json())
-    .then(json => {
-      console.log(json)
-      const newPosts = json.results.map(post => {
-        return {
-          uid: post.uid,
-          first_publication_date: format(new Date(post.first_publication_date), 'PP', {
-            locale: ptBR,
-          }),
-          data: {
-            title: post.data.title,
-            subtitle: post.data.subtitle,
-            author: post.data.author,
-          },
-        };
+  function handleLoadMorePosts(): void {
+    const params = new URLSearchParams(nextPage);
+
+    const accessToken = params.get('access_token');
+
+    fetch(nextPage)
+      .then(response => response.json())
+      .then(json => {
+        const newPosts = json.results.map(post => {
+          return {
+            uid: post.uid,
+            first_publication_date: format(
+              new Date(post.first_publication_date),
+              'PP',
+              {
+                locale: ptBR,
+              }
+            ),
+            data: {
+              title: post.data.title,
+              subtitle: post.data.subtitle,
+              author: post.data.author,
+            },
+          };
+        });
+
+        setNextPage(
+          json.next_page
+            ? `${json.next_page}&access_token=${accessToken}`
+            : null
+        );
+        setPosts([...posts, ...newPosts]);
       });
-      setNextPage(json.next_page);
-      setPosts([...posts, ...newPosts]);
-    });
   }
 
   return (
     <>
       <Head>
-          <title>Spacetraveling</title>
+        <title>Spacetraveling</title>
       </Head>
 
       <main className={styles.container}>
@@ -80,15 +94,11 @@ export default function Home({ postsPagination }: HomeProps): JSX.Element {
                   <div>
                     <time>
                       <FiCalendar />
-                      <span>
-                        {post.first_publication_date}
-                      </span>
+                      <span>{post.first_publication_date}</span>
                     </time>
                     <div>
                       <FiUser />
-                      <span>
-                        {post.data.author}
-                      </span>
+                      <span>{post.data.author}</span>
                     </div>
                   </div>
                 </a>
@@ -96,11 +106,13 @@ export default function Home({ postsPagination }: HomeProps): JSX.Element {
             );
           })}
         </div>
-        {nextPage && (
-          <div className={styles.loadMorePosts} onClick={handleLoadMorePosts}>
-            <strong>Carregar mais posts</strong>
-          </div>
-        )}
+        <div className={styles.loadMorePosts}>
+          {nextPage && (
+            <button onClick={handleLoadMorePosts}>
+              <strong>Carregar mais posts</strong>
+            </button>
+          )}
+        </div>
       </main>
     </>
   );
@@ -116,9 +128,13 @@ export const getStaticProps: GetStaticProps = async ({ previewData }) => {
   const posts = response.results.map(post => {
     return {
       uid: post.uid,
-      first_publication_date: format(new Date(post.first_publication_date), 'PP', {
-        locale: ptBR,
-      }),
+      first_publication_date: format(
+        new Date(post.first_publication_date),
+        'PP',
+        {
+          locale: ptBR,
+        }
+      ),
       data: {
         title: post.data.title,
         subtitle: post.data.subtitle,
