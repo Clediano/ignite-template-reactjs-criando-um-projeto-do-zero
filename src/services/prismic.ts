@@ -8,8 +8,8 @@ export const repositoryName = prismic.getRepositoryName(endpoint);
 
 export function linkResolver(doc): string {
   switch (doc.type) {
-    case 'post':
-      return `/${doc.uid}`;
+    case 'posts':
+      return `/post/${doc.uid}`;
     default:
       return null;
   }
